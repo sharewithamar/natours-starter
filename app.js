@@ -75,6 +75,20 @@ app.patch('/api/v1/tours/:id', (req, res) => {
     });
   });
   
+  app.delete('/api/v1/tours/:id', (req, res) => {
+    // note just for learning express - acutal patch update on file not implemented
+        if (req.params.id * 1 > tours.length) {
+            return res.status(404).json({
+            status: 'fail',
+            message: 'Invalid Id'
+          });
+        }
+        //204 - no content status - sent for delete operations
+        res.status(204).json({
+          status: 'success',
+          data: null
+        });
+      });
 
 /*app.get('/',(req,res)=>{
     //res.status(200).send('Hello from the server side');
