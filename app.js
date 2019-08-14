@@ -59,6 +59,23 @@ app.post('/api/v1/tours', (req, res) => {
   );
 });
 
+app.patch('/api/v1/tours/:id', (req, res) => {
+// note just for learning express - acutal patch update on file not implemented
+    if (req.params.id * 1 > tours.length) {
+        return res.status(404).json({
+        status: 'fail',
+        message: 'Invalid Id'
+      });
+    }
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour :'<Updated new tour here>'
+           }
+    });
+  });
+  
+
 /*app.get('/',(req,res)=>{
     //res.status(200).send('Hello from the server side');
     res.status(200).json({message:'Hello from the server side',app:'Natours'});
