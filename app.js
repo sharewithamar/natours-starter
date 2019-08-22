@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+app.use(express.static(`${__dirname}/public`));
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -20,11 +21,9 @@ app.use((req, res, next) => {
   next();
 });
 
-
-  /** Mounting Router */
-app.use('/api/v1/tours',tourRouter);
-app.use('/api/v1/users',userRouter);
-  
+/** Mounting Router */
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 /** Start the server */
 module.exports = app;
