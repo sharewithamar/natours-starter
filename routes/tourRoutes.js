@@ -1,6 +1,7 @@
 const express = require('express');
+
 const router = express.Router();
-const {
+/* const {
   checkId,
   checkBody,
   getAllTours,
@@ -8,17 +9,18 @@ const {
   getTour,
   updateTour,
   deleteTour
-} = require('../controllers/tourController'); //destructuring
+}  */
+const tourController = require('../controllers/tourController'); //destructuring
 
-router.param('id', checkId);
+//router.param('id', tourController.checkId);
 router
   .route('/')
-  .get(getAllTours)
-  .post(checkBody, createTour);
+  .get(tourController.getAllTours)
+  .post(tourController.checkBody, tourController.createTour);
 router
   .route('/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+  .get(tourController.getTour)
+  .patch(tourController.updateTour)
+  .delete(tourController.deleteTour);
 
 module.exports = router;
