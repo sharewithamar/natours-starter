@@ -135,12 +135,21 @@ exports.updateTour = async (req, res) => {
   }
 };
 
-exports.deleteTour = (req, res) => {
+exports.deleteTour = async (req, res) => {
   // note just for learning express - acutal patch update on file not implemented
 
   //204 - no content status - sent for delete operations
-  res.status(204).json({
-    status: 'success',
-    data: null
-  });
+  try {
+    await Tour.findByIdAndDelete(req.params.id);
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    });
+  }
 };
