@@ -113,15 +113,26 @@ exports.createTour = async (req, res) => {
   ); */
 };
 
-exports.updateTour = (req, res) => {
+exports.updateTour = async (req, res) => {
   // note just for learning express - acutal patch update on file not implemented
+  try {
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, //To send updated new document
+      runValidators: true
+    });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: '<Updated new tour here>'
-    }
-  });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour
+      }
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    });
+  }
 };
 
 exports.deleteTour = (req, res) => {

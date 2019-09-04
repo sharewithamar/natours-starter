@@ -17,7 +17,7 @@ mongoose
     useCreateIndex: true,
     useFindAndModify: true
   })
-  .then(con => {
+  .then(() => {
     //console.log(con.connections);
     console.log('DB connection successful');
   });
