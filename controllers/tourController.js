@@ -31,8 +31,30 @@ exports.checkId = (req, res, next, val) => {
 exports.getAllTours = async (req, res) => {
   //find method also converts the list of documents in to array of objects
   try {
-    const tours = await Tour.find();
+    //BUILD THE QUERY
+    const queryObj = { ...req.query };
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach(el => delete queryObj[el]);
+    console.log(req.query, queryObj);
+    //  console.log(req.query); - Returns query params
+    //First way of writing filter query
+    /*  const tours = await Tour.find({
+      duration: 5,
+      difficulty: 'easy'
+    });
+ */
+    //Second way of writing filter query
+    /*     const tours = await Tour.find()
+      .where('difficulty')
+      .equals('easy')
+      .where('duration')
+      .equals('5'); */
 
+    const query = Tour.find(queryObj); // await will return the document. But for sorting and pagination it wont help so use query
+    //EXECUTE THE QUERY
+    const tours = await query;
+
+    //SEND RESPONSE
     res.status(200).json({
       status: 'success',
       results: tours.length,
