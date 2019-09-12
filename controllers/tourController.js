@@ -31,12 +31,27 @@ exports.checkId = (req, res, next, val) => {
 exports.getAllTours = async (req, res) => {
   //find method also converts the list of documents in to array of objects
   try {
+    console.log(req.query);
     //BUILD THE QUERY
+    //1) Filtering
     const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
-    console.log(req.query, queryObj);
-    //  console.log(req.query); - Returns query params
+    // console.log(req.query, queryObj);
+    // console.log(req.query); - Returns query params
+
+    //{difficulty:'easy', duration:{$gte:5}} - in mongodb query
+    // { difficulty: 'easy', duration: { gte: '5' } }  - req.query    console.log(req.query);
+    //2) ADVAnCED FILTERING
+    //gte ,gt, lte, lt
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    //console.log(JSON.parse(queryStr));
+
+    const query = Tour.find(JSON.parse(queryStr)); // await will return the document. But for sorting and pagination it wont help so use query
+    //EXECUTE THE QUERY
+    const tours = await query;
+
     //First way of writing filter query
     /*  const tours = await Tour.find({
       duration: 5,
@@ -49,10 +64,6 @@ exports.getAllTours = async (req, res) => {
       .equals('easy')
       .where('duration')
       .equals('5'); */
-
-    const query = Tour.find(queryObj); // await will return the document. But for sorting and pagination it wont help so use query
-    //EXECUTE THE QUERY
-    const tours = await query;
 
     //SEND RESPONSE
     res.status(200).json({
