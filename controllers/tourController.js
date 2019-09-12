@@ -48,7 +48,18 @@ exports.getAllTours = async (req, res) => {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
     //console.log(JSON.parse(queryStr));
 
-    const query = Tour.find(JSON.parse(queryStr)); // await will return the document. But for sorting and pagination it wont help so use query
+    let query = Tour.find(JSON.parse(queryStr)); // await will return the document. But for sorting and pagination it wont help so use query
+
+    //3)sorting
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      console.log(sortBy);
+      query.sort(sortBy);
+      //sort('price ratingsAverage)
+    } else {
+      query = query.sort('-createdAt');
+    }
+
     //EXECUTE THE QUERY
     const tours = await query;
 
