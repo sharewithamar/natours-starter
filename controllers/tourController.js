@@ -71,8 +71,23 @@ exports.getAllTours = async (req, res) => {
     } else {
       query = query.select('-__v');
     }
+
+    //4)pagination
+    const page = req.query.page * 1 || 1; //convert sting in to number by multiplying with 1
+    const limit = req.query.limit * 1 || 100;
+    // page=2&limit=10 . 1-10 page 1 ; 11-20 page 2 ; 21-30 page3
+    const skip = (page - 1) * limit;
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments(); // promise with number of countDocuments
+      if (skip >= numTours) throw new Error('This page does not exist');
+    }
+
+    query = query.skip(skip).limit(limit);
+
     //EXECUTE THE QUERY
     const tours = await query;
+    //query.find().sort().select().skip().limit()  - each method returns a new query and we can chain next method untile we  the finally await the query
 
     //First way of writing filter query
     /*  const tours = await Tour.find({
@@ -96,6 +111,7 @@ exports.getAllTours = async (req, res) => {
       }
     });
   } catch (err) {
+    // console.log(err)
     res.status(404).json({
       status: 'fail',
       message: err
