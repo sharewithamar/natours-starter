@@ -1,5 +1,6 @@
 //const fs = require('fs');
 const Tour = require('./../models/tourModel');
+const APIFeatures = require('./../utils/apiFeatures');
 
 exports.aliasTopTours = (req, res, next) => {
   //limit=5&sort=-ratingsAverage,price
@@ -42,7 +43,7 @@ exports.getAllTours = async (req, res) => {
     console.log(req.query);
     //BUILD THE QUERY
     //1) Filtering
-    const queryObj = { ...req.query };
+    /*   const queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach(el => delete queryObj[el]);
     // console.log(req.query, queryObj);
@@ -56,20 +57,20 @@ exports.getAllTours = async (req, res) => {
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
     //console.log(JSON.parse(queryStr));
 
-    let query = Tour.find(JSON.parse(queryStr)); // await will return the document. But for sorting and pagination it wont help so use query
+    let query = Tour.find(JSON.parse(queryStr)); // await will return the document. But for sorting and pagination it wont help so use query */
 
     //3)sorting
-    if (req.query.sort) {
+    /*  if (req.query.sort) {
       const sortBy = req.query.sort.split(',').join(' ');
       console.log(sortBy);
       query.sort(sortBy);
       //sort('price ratingsAverage)
     } else {
       query = query.sort('-createdAt');
-    }
+    } */
 
     //FIELD LIMITING
-    if (req.query.fields) {
+    /*  if (req.query.fields) {
       console.log('**', req.query.fields);
 
       const fields = req.query.fields.split(',').join(' ');
@@ -78,10 +79,10 @@ exports.getAllTours = async (req, res) => {
       //query.select('name duration price') - known as projecting.
     } else {
       query = query.select('-__v');
-    }
+    } */
 
     //4)pagination
-    const page = req.query.page * 1 || 1; //convert sting in to number by multiplying with 1
+    /*  const page = req.query.page * 1 || 1; //convert sting in to number by multiplying with 1
     const limit = req.query.limit * 1 || 100;
     // page=2&limit=10 . 1-10 page 1 ; 11-20 page 2 ; 21-30 page3
     const skip = (page - 1) * limit;
@@ -91,10 +92,16 @@ exports.getAllTours = async (req, res) => {
       if (skip >= numTours) throw new Error('This page does not exist');
     }
 
-    query = query.skip(skip).limit(limit);
+    query = query.skip(skip).limit(limit); */
 
     //EXECUTE THE QUERY
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const tours = await features.query;
     //query.find().sort().select().skip().limit()  - each method returns a new query and we can chain next method untile we  the finally await the query
 
     //First way of writing filter query
